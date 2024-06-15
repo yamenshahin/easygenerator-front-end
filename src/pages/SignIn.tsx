@@ -1,56 +1,52 @@
+import {useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
-const schema = yup.object({
+const SignInSchema = yup.object({
   email: yup.string().required('Email is required').email('Invalid email'),
-  name: yup.string().required('Name is required'),
-  password: yup
-    .string()
-    .required('Password is required')
-    .min(8, 'Password must be at least 8 characters long')
-    .matches(/[a-z]/, 'Password must contain a lowercase letter')
-    .matches(/[A-Z]/, 'Password must contain an uppercase letter')
-    .matches(/\d/, 'Password must contain a number')
-    .matches(
-      /[^A-Za-z0-9\s]/,
-      'Password must contain a special character (exclude white space)',
-    ),
+  password: yup.string().required('Password is required'),
 })
-function SignUp() {
+
+function SignIn() {
   const {
     register,
     handleSubmit,
     formState: {errors},
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(SignInSchema),
   })
-  const onSubmit = (data: any) => {
-    console.log('Signup data:', data)
-    // TODO: Implement form submission logic (e.g., API call)
+
+  const [signInError, setSignInError] = useState<string | null>(null)
+
+  const onSubmit = async (data: any) => {
+    console.log('Sign In data:', data)
+    // TODO: Implement API call for authentication with error handling
+    try {
+      const response = await fetch('/api/signin', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Sign in failed: ${await response.text()}`)
+      }
+
+      const responseData = await response.json()
+      // Handle successful authentication (e.g., navigate to application page)
+      console.log('Sign in successful:', responseData)
+    } catch (error: any) {
+      setSignInError(error.message)
+    }
   }
+
   return (
     <>
       <div className='container mx-auto px-4 py-16'>
         <div className='shadow-md rounded-lg p-8'>
           <h2 className='text-2xl font-bold mb-4'>Sign In</h2>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className='mb-4'>
-              <label
-                htmlFor='name'
-                className='block text-gray-700 text-sm font-bold mb-2'>
-                Name
-              </label>
-              <input
-                type='text'
-                id='name'
-                {...register('name')}
-                className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400'
-              />
-              {errors.name && (
-                <p className='text-red-500 text-xs'>{errors.name.message}</p>
-              )}
-            </div>
             <div className='mb-4'>
               <label
                 htmlFor='email'
@@ -67,7 +63,7 @@ function SignUp() {
                 <p className='text-red-500 text-xs'>{errors.email.message}</p>
               )}
             </div>
-            <div className='mb-4'>
+            <div className='mb-6'>
               <label
                 htmlFor='password'
                 className='block text-gray-700 text-sm font-bold mb-2'>
@@ -92,12 +88,15 @@ function SignUp() {
                 Sign In
               </button>
               <span className='inline-block align-baseline font-bold text-sm'>
-                Already have account?{' '}
-                <a href='/' className='text-blue-500 hover:text-blue-700'>
-                  Sign In
+                Don't have an account?{' '}
+                <a href='/signup' className='text-blue-500 hover:text-blue-700'>
+                  Sign Up
                 </a>
               </span>
             </div>
+            {signInError && (
+              <p className='text-red-500 text-xs'>{signInError}</p>
+            )}
           </form>
         </div>
       </div>
@@ -105,4 +104,4 @@ function SignUp() {
   )
 }
 
-export default SignUp
+export default SignIn
