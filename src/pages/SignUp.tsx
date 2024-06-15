@@ -3,10 +3,11 @@ import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
 const schema = yup.object({
-  email: yup.string().email('Invalid email').required('Email is required'),
+  email: yup.string().required('Email is required').email('Invalid email'),
   name: yup.string().required('Name is required'),
   password: yup
     .string()
+    .required('Password is required')
     .min(8, 'Password must be at least 8 characters long')
     .matches(/[a-z]/, 'Password must contain a lowercase letter')
     .matches(/[A-Z]/, 'Password must contain an uppercase letter')
@@ -14,8 +15,7 @@ const schema = yup.object({
     .matches(
       /[^A-Za-z0-9\s]/,
       'Password must contain a special character (exclude white space)',
-    )
-    .required('Password is required'),
+    ),
 })
 function SignUp() {
   const {
