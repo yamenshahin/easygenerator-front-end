@@ -4,6 +4,7 @@ import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import axios from 'axios'
 import {useNavigate} from 'react-router-dom'
+import {useAuth} from '../hooks/useAuth'
 
 const SignInSchema = yup.object({
   email: yup.string().required('Email is required').email('Invalid email'),
@@ -25,6 +26,10 @@ function SignIn() {
 
   const [signInError, setSignInError] = useState<string | null>(null)
   const navigate = useNavigate()
+  const isLoggedIn = useAuth()
+  if (isLoggedIn) {
+    navigate('/application')
+  }
 
   const onSubmit = async (data: FormData) => {
     try {

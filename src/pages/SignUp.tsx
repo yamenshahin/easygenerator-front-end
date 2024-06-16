@@ -4,6 +4,7 @@ import * as yup from 'yup'
 import axios from 'axios'
 import {useState} from 'react'
 import {useNavigate} from 'react-router-dom'
+import {useAuth} from '../hooks/useAuth'
 
 const schema = yup.object({
   email: yup.string().required('Email is required').email('Invalid email'),
@@ -28,7 +29,10 @@ interface FormData {
 function SignUp() {
   const [signUpError, setSignUpError] = useState<string | null>(null)
   const navigate = useNavigate()
-
+  const isLoggedIn = useAuth()
+  if (isLoggedIn) {
+    navigate('/application')
+  }
   const {
     register,
     handleSubmit,
