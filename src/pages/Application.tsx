@@ -1,3 +1,4 @@
+import Logo from '../component/Logo'
 import {useAuth} from '../hooks/useAuth'
 import {useNavigate} from 'react-router-dom'
 
@@ -6,11 +7,14 @@ function Application() {
   const navigate = useNavigate()
   if (!isLoggedIn) {
     return (
-      <div>
-        You are not logged in. Please sign in to access this page.
-        <br />
-        <a href='/signin'>Sign In</a>
-      </div>
+      <>
+        <span className='inline-block align-baseline font-bold text-sm text-center pt-20'>
+          You are not logged in. Please sign in to access this page.{' '}
+          <a href='/' className='text-blue-500 hover:text-blue-700'>
+            Sign In
+          </a>
+        </span>
+      </>
     )
   }
 
@@ -23,8 +27,14 @@ function Application() {
 
   return (
     <>
-      <h1>Welcome to the application.</h1>
-      <button onClick={signOut}>Sign Out</button>
+      <h1 className='text-center pt-20 pb-10 text-xl'>
+        Welcome to the application.
+      </h1>
+      <button
+        className='bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4'
+        onClick={signOut}>
+        Sign Out
+      </button>
     </>
   )
 }

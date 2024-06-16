@@ -3,6 +3,7 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import SignUp from './pages/SignUp.tsx'
 import SignIn from './pages/SignIn.tsx'
 import Application from './pages/Application.tsx'
+import Style from './pages/Style.tsx'
 function App() {
   return (
     <>
