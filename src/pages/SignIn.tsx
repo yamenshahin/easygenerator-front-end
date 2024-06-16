@@ -4,7 +4,6 @@ import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import axios from 'axios'
 import {useNavigate} from 'react-router-dom'
-import {useSignIn} from '../hooks/useSignIn'
 
 const SignInSchema = yup.object({
   email: yup.string().required('Email is required').email('Invalid email'),
