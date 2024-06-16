@@ -1,5 +1,9 @@
 # React + TypeScript + Vite
 
+## Env file
+
+**The app includes a file named `.env-example` as a guide. Copy and paste its contents into a new file named `.env`.**
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
