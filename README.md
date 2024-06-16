@@ -4,6 +4,12 @@
 
 **The app includes a file named `.env-example` as a guide. Copy and paste its contents into a new file named `.env`.**
 
+## This app use
+
+- Use TypeScript
+- Implementing logging on the back end
+- Following security best practices
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
