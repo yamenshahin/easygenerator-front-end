@@ -45,14 +45,22 @@ function SignUp() {
           headers: {'Content-Type': 'application/json'},
         },
       )
-
       // Handle successful signup with auto sign-in and redirect
       if (response.status === 201) {
-        console.log('Sign Up successful:', response.data)
         // Assuming successful signup returns a token or user data
         // Simulate storing it in local storage (replace with your logic)
-        localStorage.setItem('userToken', response.data.token)
-        //navigate('/application') // Redirect to application page
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/auth/signup`,
+          data,
+          {
+            headers: {'Content-Type': 'application/json'},
+          },
+        )
+
+        const responseData = await response.data
+        // Assuming successful response contains a token
+        localStorage.setItem('userToken', responseData.token) // Replace with your token key
+        navigate('/application') // Use useNavigate hook for redirection
       }
     } catch (error: any) {
       if (error.response.status !== 201) {

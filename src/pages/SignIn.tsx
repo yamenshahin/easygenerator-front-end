@@ -2,12 +2,19 @@ import {useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup'
+import axios from 'axios'
+import {useNavigate} from 'react-router-dom'
+import {useSignIn} from '../hooks/useSignIn'
 
 const SignInSchema = yup.object({
   email: yup.string().required('Email is required').email('Invalid email'),
   password: yup.string().required('Password is required'),
 })
 
+interface FormData {
+  email: string
+  password: string
+}
 function SignIn() {
   const {
     register,
@@ -18,26 +25,25 @@ function SignIn() {
   })
 
   const [signInError, setSignInError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
-  const onSubmit = async (data: any) => {
-    console.log('Sign In data:', data)
-    // TODO: Implement API call for authentication with error handling
+  const onSubmit = async (data: FormData) => {
     try {
-      const response = await fetch('/api/signin', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data),
-      })
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/signup`,
+        data,
+        {
+          headers: {'Content-Type': 'application/json'},
+        },
+      )
 
-      if (!response.ok) {
-        throw new Error(`Sign in failed: ${await response.text()}`)
-      }
+      const responseData = await response.data
 
-      const responseData = await response.json()
-      // Handle successful authentication (e.g., navigate to application page)
-      console.log('Sign in successful:', responseData)
+      // Assuming successful response contains a token
+      localStorage.setItem('userToken', responseData.token) // Replace with your token key
+      navigate('/application') // Use useNavigate hook for redirection
     } catch (error: any) {
-      setSignInError(error.message)
+      setSignInError(error.response.data.message || 'Sign Up failed.')
     }
   }
 
@@ -46,6 +52,11 @@ function SignIn() {
       <div className='container mx-auto px-4 py-16'>
         <div className='shadow-md rounded-lg p-8'>
           <h2 className='text-2xl font-bold mb-4'>Sign In</h2>
+          {signInError && (
+            <p className='text-red-500 text-xs first-letter:uppercase'>
+              {signInError}
+            </p>
+          )}
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className='mb-4'>
               <label
