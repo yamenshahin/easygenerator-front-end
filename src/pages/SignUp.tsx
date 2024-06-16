@@ -1,6 +1,8 @@
 import {useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup'
+import axios from 'axios'
+import {useState} from 'react'
 
 const schema = yup.object({
   email: yup.string().required('Email is required').email('Invalid email'),
@@ -17,7 +19,14 @@ const schema = yup.object({
       'Password must contain a special character (exclude white space)',
     ),
 })
+interface FormData {
+  name: string
+  email: string
+  password: string
+}
 function SignUp() {
+  const [signUpError, setSignUpError] = useState<string | null>(null)
+
   const {
     register,
     handleSubmit,
@@ -25,9 +34,30 @@ function SignUp() {
   } = useForm({
     resolver: yupResolver(schema),
   })
-  const onSubmit = (data: any) => {
-    console.log('Signup data:', data)
-    // TODO: Implement form submission logic (e.g., API call)
+  const onSubmit = async (data: FormData) => {
+    console.log(`${import.meta.env.VITE_API_URL}/users`)
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/users`,
+        data,
+      )
+    } catch (error: any) {
+      console.log(error.response.data.message)
+      if (error.response.status !== 201) {
+        // Handle API errors based on status code
+        if (error.response.status === 400) {
+          // Assuming backend returns 400 for Bad Request
+
+          setSignUpError(error.response.data.message || 'Email already exists.') // Use specific message if available
+        } else {
+          setSignUpError(error.response.data.message || 'Sign Up failed.')
+        }
+      } else {
+        console.log('Sign Up successful:', error.response.data)
+        // Handle successful sign-up (e.g., redirect to sign-in page)
+      }
+      setSignUpError(error.response.data.message || 'Sign Up failed.')
+    }
   }
   return (
     <>
@@ -35,6 +65,11 @@ function SignUp() {
         <div className='shadow-md rounded-lg p-8'>
           <h2 className='text-2xl font-bold mb-4'>Sign In</h2>
           <form onSubmit={handleSubmit(onSubmit)}>
+            {signUpError && (
+              <p className='text-red-500 text-xs first-letter:uppercase'>
+                {signUpError}
+              </p>
+            )}
             <div className='mb-4'>
               <label
                 htmlFor='name'
@@ -77,6 +112,7 @@ function SignUp() {
                 type='password'
                 id='password'
                 {...register('password')}
+                defaultValue={'abcdABCD123!@#'}
                 className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400'
               />
               {errors.password && (
