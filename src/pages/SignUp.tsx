@@ -3,6 +3,7 @@ import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import axios from 'axios'
 import {useState} from 'react'
+import {useNavigate} from 'react-router-dom'
 
 const schema = yup.object({
   email: yup.string().required('Email is required').email('Invalid email'),
@@ -26,6 +27,7 @@ interface FormData {
 }
 function SignUp() {
   const [signUpError, setSignUpError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const {
     register,
@@ -35,14 +37,12 @@ function SignUp() {
     resolver: yupResolver(schema),
   })
   const onSubmit = async (data: FormData) => {
-    console.log(`${import.meta.env.VITE_API_URL}/users`)
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/users`,
         data,
       )
     } catch (error: any) {
-      console.log(error.response.data.message)
       if (error.response.status !== 201) {
         // Handle API errors based on status code
         if (error.response.status === 400) {
@@ -52,9 +52,6 @@ function SignUp() {
         } else {
           setSignUpError(error.response.data.message || 'Sign Up failed.')
         }
-      } else {
-        console.log('Sign Up successful:', error.response.data)
-        // Handle successful sign-up (e.g., redirect to sign-in page)
       }
       setSignUpError(error.response.data.message || 'Sign Up failed.')
     }
